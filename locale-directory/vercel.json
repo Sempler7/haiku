@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "builds": [
-    { "src": "api/locales.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/locales", "dest": "/api/locales.js" }
-  ]
-}
