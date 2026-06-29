@@ -75,23 +75,28 @@ module.exports = (req, res) => {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  const all = getLocales();
-  const { q } = req.query;
+  try {
+    const all = getLocales();
+    const qParam = req.query ? req.query.q : undefined;
+    const q = Array.isArray(qParam) ? qParam[0] : qParam;
 
-  if (!q || !q.trim()) {
-    return res.status(200).json(all);
+    if (!q || !q.trim()) {
+      return res.status(200).json(all);
+    }
+
+    const query = q.trim().toLowerCase();
+    const filtered = all.filter(l =>
+      l.code.toLowerCase().includes(query) ||
+      l.currency.toLowerCase().includes(query) ||
+      l.name.toLowerCase().includes(query) ||
+      l.capital.toLowerCase().includes(query) ||
+      l.language.toLowerCase().includes(query) ||
+      l.tld.toLowerCase().includes(query) ||
+      l.utcOffset.toLowerCase().includes(query)
+    );
+
+    return res.status(200).json(filtered);
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal server error' });
   }
-
-  const query = q.trim().toLowerCase();
-  const filtered = all.filter(l =>
-    l.code.toLowerCase().includes(query) ||
-    l.currency.toLowerCase().includes(query) ||
-    l.name.toLowerCase().includes(query) ||
-    l.capital.toLowerCase().includes(query) ||
-    l.language.toLowerCase().includes(query) ||
-    l.tld.toLowerCase().includes(query) ||
-    l.utcOffset.toLowerCase().includes(query)
-  );
-
-  return res.status(200).json(filtered);
 };
