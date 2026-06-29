@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Locale Directory</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="header">
+    <h1 class="header__title">🌍 Locale Directory</h1>
+    <p class="header__subtitle">Довідник локалей країн світу</p>
+    <div class="search">
+      <input
+        type="text"
+        class="search__input"
+        id="searchInput"
+        placeholder="Пошук за локаллю, країною, валютою…"
+        autocomplete="off"
+      >
+      <span class="search__icon">⌕</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="status" id="status">
+      <div class="spinner"></div>
+      <span>Завантаження даних…</span>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">
+      <span class="empty__icon">🔍</span>
+      <p class="empty__text">Нічого не знайдено</p>
+      <p class="empty__hint">Спробуйте змінити запит</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span id="countDisplay"></span>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
