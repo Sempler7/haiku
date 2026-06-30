@@ -4,4 +4,4 @@
 // const __API_BASE__ = "http://localhost:8000";
 //
 // Render deployment:
-const __API_BASE__ = "https://haiku-ikhp.onrender.com";
+var __API_BASE__ = "https://haiku-ikhp.onrender.com";
