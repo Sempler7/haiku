@@ -6,8 +6,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
-from models import GenerateRequest, GenerateResponse, LANGUAGES
-from prompter import build_system_prompt, build_user_prompt
+from backend.models import GenerateRequest, GenerateResponse, LANGUAGES
+from backend.prompter import build_system_prompt, build_user_prompt
 
 load_dotenv()
 
