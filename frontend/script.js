@@ -255,16 +255,63 @@ async function generate() {
   state.errorMsg = "";
   render();
 
-  try {
+  // Helper: one fetch attempt
+  async function tryFetch(signal) {
     const res = await fetch(API_BASE + "/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      keepalive: true,
       body: JSON.stringify({
         keywords: state.keywords,
         language: state.lang,
         spice_level: state.spice,
       }),
+      signal,
     });
+    return res;
+  }
+
+  // Helper: attempt with retry for Render's cold start
+  async function fetchWithWakeUp() {
+    // First attempt
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+    try {
+      return await tryFetch(controller.signal);
+    } catch (firstErr) {
+      // If it's a network error (Render cold start), retry once after 3s
+      if (
+        firstErr instanceof DOMException ||
+        (firstErr instanceof TypeError &&
+          (firstErr.message.includes("fetch") ||
+           firstErr.message.includes("NetworkError")))
+      ) {
+        // Show "waking up" message
+        els.resultStage.innerHTML = `
+          <div class="loader">
+            <div class="loader-ring"></div>
+            <div class="loader-text">Пробуджую сервер… зачекайте кілька секунд</div>
+          </div>
+        `;
+        await new Promise((r) => setTimeout(r, 3000));
+
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 25000);
+        try {
+          return await tryFetch(controller2.signal);
+        } finally {
+          clearTimeout(timeoutId2);
+        }
+      }
+      throw firstErr;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  try {
+    const res = await fetchWithWakeUp();
 
     if (!res.ok) {
       let detail = "Помилка сервера. Спробуйте ще раз.";
